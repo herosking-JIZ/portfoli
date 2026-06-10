@@ -1,0 +1,100 @@
+// Schéma de la base de données du portfolio
+// Documentation : https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Profile {
+  id         Int      @id @default(autoincrement())
+  name       String
+  monogram   String   @default("")
+  role       String   @default("")
+  tagline    String   @default("")
+  location   String   @default("")
+  email      String   @default("")
+  phone      String   @default("")
+  linkedin   String   @default("")
+  github     String   @default("")
+  cvUrl      String   @default("")
+  photoUrl   String   @default("")
+  status     String   @default("")
+  about      String   @default("")
+  objectives String[] @default([])
+  interests  String[] @default([])
+}
+
+model SkillCategory {
+  id     Int     @id @default(autoincrement())
+  name   String
+  icon   String  @default("code") // spark | code | db
+  order  Int     @default(0)
+  skills Skill[]
+}
+
+model Skill {
+  id         Int           @id @default(autoincrement())
+  name       String
+  level      Int           @default(60)
+  order      Int           @default(0)
+  category   SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+}
+
+model Language {
+  id    Int    @id @default(autoincrement())
+  name  String
+  level String @default("")
+  order Int    @default(0)
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String   @default("")
+  year        String   @default("")
+  award       String   @default("")
+  description String   @default("")
+  tech        String[] @default([])
+  github      String   @default("")
+  demo        String   @default("")
+  cover       String   @default("")
+  order       Int      @default(0)
+}
+
+model TimelineEntry {
+  id     Int    @id @default(autoincrement())
+  period String @default("")
+  title  String
+  org    String @default("")
+  order  Int    @default(0)
+}
+
+model Award {
+  id          Int    @id @default(autoincrement())
+  date        String @default("")
+  title       String
+  description String @default("")
+  order       Int    @default(0)
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
